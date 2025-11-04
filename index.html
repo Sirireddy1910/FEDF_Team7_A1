@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BuyBuddy</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  background: 
+    linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+    url("https://t4.ftcdn.net/jpg/07/41/09/09/360_F_741090978_Oa4o8aEEKX9NPPZAhRHQCprzD29VwVen.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #fff;
+}
+
+header {
+  background: rgba(0, 0, 0, 0.55);
+  padding: 25px;
+  text-align: center;
+  color: #f5f5f5;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+}
+header h1 {
+  margin: 0;
+  font-size: 38px;
+  letter-spacing: 1px;
+  color: #e3fdfd;
+}
+
+nav {
+  margin-top: 12px;
+}
+nav input, nav select, nav button {
+  padding: 8px 12px;
+  margin: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.9);
+  color: #333;
+  transition: all 0.3s ease;
+}
+nav input:focus, nav select:focus {
+  outline: none;
+  border-color: #48c6ef;
+  box-shadow: 0 0 6px rgba(72,198,239,0.6);
+}
+nav button {
+  cursor: pointer;
+  background: linear-gradient(135deg, #48c6ef, #6f86d6);
+  color: white;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+nav button:hover {
+  background: linear-gradient(135deg, #6f86d6, #48c6ef);
+  transform: translateY(-2px);
+}
+
+.container {
+  padding: 60px;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 25px;
+}
+
+.product-card, .recommend-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+}
+.product-card:hover, .recommend-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.product-card img, .recommend-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.product-card button, .recommend-card button {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  border: none;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.product-card button:hover, .recommend-card button:hover {
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transform: scale(1.05);
+}
+
+.form-box {
+  max-width: 340px;
+  margin: 25px auto;
+  padding: 25px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+.form-box h2 {
+  text-align: center;
+  color: #a7faff;
+  margin-bottom: 15px;
+}
+.form-box input, .form-box textarea, .form-box select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.9);
+  color: #333;
+}
+.form-box input:focus, .form-box textarea:focus {
+  border-color: #48c6ef;
+  box-shadow: 0 0 6px rgba(72,198,239,0.6);
+}
+.form-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #48c6ef, #6f86d6);
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.form-box button:hover {
+  background: linear-gradient(135deg, #6f86d6, #48c6ef);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+}
+.cart-table th, .cart-table td {
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 12px;
+  text-align: center;
+  color: #fff;
+}
+.cart-table th {
+  background: linear-gradient(135deg, #48c6ef, #6f86d6);
+}
+.cart-table button {
+  padding: 6px 12px;
+  border: none;
+  background: linear-gradient(135deg, #f857a6, #ff5858);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.cart-table button:hover {
+  background: linear-gradient(135deg, #ff5858, #f857a6);
+  transform: scale(1.05);
+}
+
+.buy-now-btn {
+  margin-top: 20px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.buy-now-btn:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.chart-section {
+  margin: 35px auto;
+  width: 92%;
+  background: rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  min-height: 380px;
+  color: #fff;
+}
+.pie-wrapper {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pie-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+footer {
+  background: rgba(0, 0, 0, 0.55);
+  text-align: center;
+  padding: 18px;
+  color: #f0f0f0;
+  margin-top: 35px;
+  box-shadow: 0 -3px 12px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>BuyBuddy</h1>
+  <nav>
+    <input type="text" id="searchInput" placeholder="Search product..." onkeyup="searchProducts()">
+    <select id="categoryFilter" onchange="filterCategory()">
+      <option value="">All Categories</option>
+      <option value="mobiles">Mobiles</option>
+      <option value="laptops">Laptops</option>
+      <option value="cameras">Cameras</option>
+      <option value="grocery">Grocery</option>
+      <option value="clothing">Clothing</option>
+    </select>
+    <button onclick="showProfile()">Profile</button>
+    <button onclick="showProducts()">Products</button>
+    <button onclick="showCart()">Cart</button>
+  </nav>
+</header>
+
+<div id="auth-section" class="container">
+  <div class="form-box">
+    <h2>Sign Up</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
+    <button onclick="signup()">Sign Up</button>
+  </div>
+</div>
+
+<div id="profile-section" class="container" style="display:none;">
+  <h2>User Profile</h2>
+  <p><strong>Username:</strong> <span id="profile-username"></span></p>
+  <p><strong>Email:</strong> <span id="profile-email"></span></p>
+  <p><strong>Total Items:</strong> <span id="profile-items">0</span></p>
+  <p><strong>Total Bill:</strong> <span id="currency-symbol">₹</span><span id="profile-bill">0</span></p>
+  <div class="chart-section">
+    <h2>Monthly Purchases</h2>
+    <div class="pie-wrapper">
+      <canvas id="pieChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div id="cart-section" class="container" style="display:none;">
+  <h2>Cart</h2>
+  <table class="cart-table" id="cart-table">
+    <thead>
+      <tr><th>Item</th><th>Price</th><th>Month</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <button class="buy-now-btn" onclick="goToPayment()">Buy Now</button>
+</div>
+
+<div id="products-section" class="container" style="display:none;">
+  <h2 style="text-align:center;">Products</h2>
+  <div class="grid-container" id="product-grid"></div>
+</div>
+
+<div id="payment-section" class="container" style="display:none;">
+  <div class="form-box">
+    <h2>Payment & Address</h2>
+    <textarea id="address" placeholder="Enter your full address..." rows="3"></textarea>
+    <select id="payment-method">
+      <option value="">Select Payment Method</option>
+      <option value="upi">UPI</option>
+      <option value="card">Credit/Debit Card</option>
+      <option value="cod">Cash on Delivery</option>
+    </select>
+    <button onclick="confirmPayment()">Confirm Payment</button>
+  </div>
+</div>
+
+<footer>
+  <p>BuyBuddy | Shop. Smile. Repeat.</p>
+</footer>
+
+<script>
+const currency = "₹";
+let user=null;
+let userEmail="";
+let cartItems=[];
+let userPurchases=Array(12).fill(0);
+const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const products=[
+{name:"Iphone 16 PRO MAX", price:125000, month:0, category:"mobiles", image:"https://iplanet.one/cdn/shop/files/iPhone_16_Pro_Desert_Titanium_PDP_Image_Position_1__en-IN_38a0c11d-1864-457e-a2e2-7333c0480a7b.jpg?v=1727249764"},
+{name:"LENOVO Laptop", price:100000, month:1, category:"laptops", image:"https://www.lenovo.dotcomstores.in/wp-content/uploads/2023/12/yoga6.jpg"},
+{name:"DSLR Camera", price:25000, month:2, category:"cameras", image:"https://rvrsp.in/wp-content/uploads/2024/09/professional-dslr-camera-with-zoom-lens.jpg"},
+{name:"Rice", price:1500, month:3, category:"grocery", image:"https://spanishboosting.com/wp-content/uploads/2024/04/organic-rice.jpg"},
+{name:"T-Shirt", price:850, month:4, category:"clothing", image:"https://wrogn.com/cdn/shop/files/Picasso-Gone-Wrogn-Back-Printed-T-Shirt.webp?v=1744697737"},
+{name:"Jeans", price:1999, month:5, category:"clothing", image:"https://assets.ajio.com/medias/sys_master/root/20241120/dL1V/673ddac90f47f80c87980969/-473Wx593H-442785658-blue-MODEL.jpg"},  
+{name:"MACBOOK", price:120000, month:1, category:"laptops", image:"https://hf-store.pk/wp-content/uploads/2023/12/WhatsApp-Image-2023-12-11-at-1.26.34-AM-1.jpeg"},
+{name:"Samsung S25 ULTRA", price:65000, month:0, category:"mobiles", image:"https://m.media-amazon.com/images/I/717Q2swzhBL._UF894,1000_QL80_.jpg"}
+];
+
+async function signup(){
+  const name = document.getElementById('username').value;
+  const email = document.getElementById('email').value;
+
+  if(!name || !email){
+    alert("Enter both fields");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: name, email: email })
+    });
+
+    const data = await res.json();
+    alert("✅ " + data.message);
+    user = name;
+    userEmail = email;
+    showProducts();
+    updateProfile();
+  } catch (error) {
+    alert("⚠️ Cannot connect to backend. Is the server running?");
+    console.error(error);
+  }
+}
+
+
+function generateProducts(filterCategory="",search=""){
+ const grid=document.getElementById('product-grid');
+ grid.innerHTML="";
+ products.forEach((p,i)=>{
+ if((!filterCategory || p.category===filterCategory) && (!search || p.name.toLowerCase().includes(search.toLowerCase()))){
+ const div=document.createElement('div');
+ div.className="product-card";
+ div.innerHTML=`<img src="${p.image}" alt="${p.name}"><h3>${p.name}</h3><p>${currency}${p.price}</p><button onclick="addToCart(${i})">Add to Cart</button>`;
+ grid.appendChild(div);
+ }
+ });
+}
+
+function addToCart(i){
+ const p=products[i];
+ cartItems.push({name:p.name,price:p.price,month:months[p.month],category:p.category});
+ userPurchases[p.month]+=p.price;
+ alert(`"${p.name}" added to cart!`);
+ updateProfile();
+ pieChart.update();
+}
+
+function removeFromCart(i){
+ const item=cartItems[i];
+ const monthIndex=months.indexOf(item.month);
+ userPurchases[monthIndex]-=item.price;
+ cartItems.splice(i,1);
+ updateProfile();
+ pieChart.update();
+}
+
+function updateProfile(){
+ document.getElementById('profile-username').innerText=user;
+ document.getElementById('profile-email').innerText=userEmail;
+ document.getElementById('profile-items').innerText=cartItems.length;
+ const total=cartItems.reduce((sum,i)=>sum+i.price,0);
+ document.getElementById('profile-bill').innerText=total;
+ const tbody=document.querySelector('#cart-table tbody');
+ tbody.innerHTML="";
+ cartItems.forEach((item,i)=>{
+ const tr=document.createElement('tr');
+ tr.innerHTML=`<td>${item.name}</td><td>${currency}${item.price}</td><td>${item.month}</td><td><button onclick="removeFromCart(${i})">Remove</button></td>`;
+ tbody.appendChild(tr);
+ });
+}
+
+function showProfile(){
+ document.getElementById('auth-section').style.display='none';
+ document.getElementById('products-section').style.display='none';
+ document.getElementById('cart-section').style.display='none';
+ document.getElementById('payment-section').style.display='none';
+ document.getElementById('profile-section').style.display='block';
+ updateProfile();
+}
+
+function showProducts(){
+ document.getElementById('auth-section').style.display='none';
+ document.getElementById('products-section').style.display='block'; 
+ document.getElementById('profile-section').style.display='none'; 
+ document.getElementById('cart-section').style.display='none'; 
+ document.getElementById('payment-section').style.display='none';
+ generateProducts();
+}
+
+function showCart(){
+ document.getElementById('auth-section').style.display='none';
+ document.getElementById('products-section').style.display='none'; 
+ document.getElementById('profile-section').style.display='none'; 
+ document.getElementById('cart-section').style.display='block'; 
+ document.getElementById('payment-section').style.display='none';
+ updateProfile();
+}
+
+function goToPayment(){
+  if(cartItems.length===0){
+    alert("Your cart is empty!");
+    return;
+  }
+  document.getElementById('cart-section').style.display='none';
+  document.getElementById('payment-section').style.display='block';
+}
+
+function confirmPayment(){
+  const address=document.getElementById('address').value.trim();
+  const method=document.getElementById('payment-method').value;
+  if(!address || !method){
+    alert("Please fill all details!");
+    return;
+  }
+  const total = cartItems.reduce((sum,i)=>sum+i.price,0);
+  alert(`Payment Successful!\nTotal: ${currency}${total}\nMethod: ${method.toUpperCase()}\nThank you for shopping with BuyBuddy!`);
+  cartItems=[];
+  updateProfile();
+  pieChart.update();
+  showProfile();
+}
+
+function searchProducts(){
+ const search=document.getElementById('searchInput').value;
+ const category=document.getElementById('categoryFilter').value;
+ showProducts();
+ generateProducts(category,search);
+}
+
+function filterCategory(){
+ const category=document.getElementById('categoryFilter').value;
+ const search=document.getElementById('searchInput').value;
+ showProducts();
+ generateProducts(category,search);
+}
+
+const ctx = document.getElementById('pieChart').getContext('2d');
+const pieChart = new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'Amount ('+currency+')',
+      data: userPurchases,
+      backgroundColor: [
+        "#0f9b8e", "#3fa9f5", "#ff7f50", "#40c4b2",
+        "#6c63ff", "#ffb347", "#84ff63", "#ff6384",
+        "#2b82d9", "#ffc107", "#e76f3c", "#9966ff"
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          usePointStyle: true,
+          font: { size: 14, weight: 'bold' }
+        }
+      }
+    },
+    animation: {
+      duration: 2000,
+      easing: 'easeInOutQuart',
+      animateScale: true,
+      animateRotate: true
+    }
+  }
+});
+</script>
+</body>
+</html>
